@@ -10,19 +10,14 @@
 
     <button onclick="voltar()">Voltar</button>
 
-    <script>
-      google.script.run.withSuccessHandler(user => {
-        if (!user || !user.sistemas.includes('aei')) {
-          window.location.href = '/';
-          return;
-        }
-        document.getElementById('info').innerText =
-          `Usuário: ${user.nome} | Perfil: ${user.perfil}`;
-      }).getSession();
+<script>
+const user = JSON.parse(localStorage.getItem("usuario"));
+if (!user || user.sistema !== "aei") location.href = "login.html";
+</script>
 
-      function voltar() {
-        window.location.href = '?page=home';
-      }
-    </script>
+<h1>Sistema AEI</h1>
+<p>Acesso autorizado</p>
+
   </body>
 </html>
+
