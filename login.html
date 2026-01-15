@@ -12,20 +12,25 @@
 <input id="senha" type="password" placeholder="Senha">
 <button onclick="login()">Entrar</button>
 
-<p id="msg"></p>
+<p id="msg" style="color:red"></p>
 
 <script>
 const API = "https://script.google.com/macros/s/AKfycby6uAaLn_laRb-o5iGow0C4is_ynRW-nX_l6q8pI6REAt6alllBlJW9YJtCPnVNYwU7/exec";
 
 function login() {
+  msg.innerText = "Validando...";
+
   fetch(API, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({
-      email: email.value,
-      senha: senha.value
+      email: document.getElementById("email").value,
+      senha: document.getElementById("senha").value
     })
   })
-  .then(r => r.json())
+  .then(res => res.json())
   .then(res => {
     if (!res.success) {
       msg.innerText = res.message;
@@ -35,10 +40,14 @@ function login() {
     localStorage.setItem("usuario", JSON.stringify(res));
 
     if (res.sistema === "acb") {
-      window.location.href = "acbapp.html";
+      location.href = "acbapp.html";
     } else {
-      window.location.href = "aeiapp.html";
+      location.href = "aeiapp.html";
     }
+  })
+  .catch(err => {
+    msg.innerText = "Erro de conexão";
+    console.error(err);
   });
 }
 </script>
