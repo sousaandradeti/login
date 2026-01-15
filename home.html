@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial;
+        background: #eef1f5;
+      }
+      .container {
+        width: 500px;
+        margin: 60px auto;
+        background: white;
+        padding: 25px;
+        border-radius: 6px;
+      }
+      .app {
+        padding: 12px;
+        margin-top: 10px;
+        background: #0066cc;
+        color: white;
+        cursor: pointer;
+        border-radius: 4px;
+        text-align: center;
+      }
+      .logout {
+        background: #cc0000;
+        margin-top: 25px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h2>Bem-vindo</h2>
+      <p id="user"></p>
+
+      <h3>Sistemas disponíveis</h3>
+      <div id="apps"></div>
+
+      <div class="app logout" onclick="sair()">Logout</div>
+    </div>
+
+    <script>
+      google.script.run.withSuccessHandler(user => {
+        if (!user) {
+          window.location.href = '/';
+          return;
+        }
+
+        document.getElementById('user').innerText =
+          `${user.nome} (${user.perfil})`;
+
+        const container = document.getElementById('apps');
+
+        user.sistemas.forEach(app => {
+          const div = document.createElement('div');
+          div.className = 'app';
+          div.innerText = app.toUpperCase() + ' APP';
+          div.onclick = () => {
+            window.location.href = `?page=${app}app`;
+          };
+          container.appendChild(div);
+        });
+      }).getSession();
+
+      function sair() {
+        google.script.run.withSuccessHandler(() => {
+          window.location.href = '/';
+        }).logout();
+      }
+    </script>
+  </body>
+</html>

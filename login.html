@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      body {
+        font-family: Arial;
+        background: #f4f6f8;
+      }
+      .box {
+        width: 320px;
+        margin: 120px auto;
+        padding: 25px;
+        background: white;
+        border-radius: 6px;
+        box-shadow: 0 2px 10px rgba(0,0,0,.2);
+      }
+      input, button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+      }
+      button {
+        background: #0066cc;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="box">
+      <h3>Login Corporativo</h3>
+
+      <input type="email" id="email" placeholder="E-mail">
+      <input type="password" id="senha" placeholder="Senha">
+
+      <button onclick="entrar()">Entrar</button>
+
+      <p id="msg" style="color:red"></p>
+    </div>
+
+    <script>
+      function entrar() {
+        google.script.run.withSuccessHandler(res => {
+          if (res.success) {
+            window.location.href = '?page=home';
+          } else {
+            document.getElementById('msg').innerText = res.message;
+          }
+        }).login(
+          document.getElementById('email').value,
+          document.getElementById('senha').value
+        );
+      }
+    </script>
+  </body>
+</html>

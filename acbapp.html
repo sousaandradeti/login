@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+
+  <body>
+    <h2>Sistema ACB</h2>
+    <p id="info"></p>
+
+    <button onclick="voltar()">Voltar</button>
+
+    <script>
+      google.script.run.withSuccessHandler(user => {
+        if (!user || !user.sistemas.includes('acb')) {
+          window.location.href = '/';
+          return;
+        }
+        document.getElementById('info').innerText =
+          `Usuário: ${user.nome} | Perfil: ${user.perfil}`;
+      }).getSession();
+
+      function voltar() {
+        window.location.href = '?page=home';
+      }
+    </script>
+  </body>
+</html>
