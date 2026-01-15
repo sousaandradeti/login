@@ -42,33 +42,18 @@
     </div>
 
     <script>
-      google.script.run.withSuccessHandler(user => {
-        if (!user) {
-          window.location.href = '/';
-          return;
-        }
+const user = JSON.parse(localStorage.getItem("usuario"));
+if (!user) location.href = "login.html";
+</script>
 
-        document.getElementById('user').innerText =
-          `${user.nome} (${user.perfil})`;
+<h2>Bem-vindo</h2>
+<p id="nome"></p>
 
-        const container = document.getElementById('apps');
+<script>
+nome.innerText = user.nome;
+</script>
 
-        user.sistemas.forEach(app => {
-          const div = document.createElement('div');
-          div.className = 'app';
-          div.innerText = app.toUpperCase() + ' APP';
-          div.onclick = () => {
-            window.location.href = `?page=${app}app`;
-          };
-          container.appendChild(div);
-        });
-      }).getSession();
-
-      function sair() {
-        google.script.run.withSuccessHandler(() => {
-          window.location.href = '/';
-        }).logout();
-      }
-    </script>
+   
   </body>
 </html>
+
