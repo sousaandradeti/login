@@ -41,19 +41,21 @@
       <div class="app logout" onclick="sair()">Logout</div>
     </div>
 
-    <script>
+<script>
 const user = JSON.parse(localStorage.getItem("usuario"));
 if (!user) location.href = "login.html";
+
+document.write("<h2>Sistemas disponíveis</h2>");
+user.sistemas.forEach(s => {
+  document.write(`<p><a href="${s}app.html">${s.toUpperCase()}</a></p>`);
+});
 </script>
 
-<h2>Bem-vindo</h2>
-<p id="nome"></p>
-
-<script>
 nome.innerText = user.nome;
 </script>
 
    
   </body>
 </html>
+
 
