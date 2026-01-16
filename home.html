@@ -1,61 +1,62 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <base target="_top">
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Home - Seleção de Sistema</title>
     <style>
-      body {
-        font-family: Arial;
-        background: #eef1f5;
-      }
-      .container {
-        width: 500px;
-        margin: 60px auto;
-        background: white;
-        padding: 25px;
-        border-radius: 6px;
-      }
-      .app {
-        padding: 12px;
-        margin-top: 10px;
-        background: #0066cc;
-        color: white;
-        cursor: pointer;
-        border-radius: 4px;
-        text-align: center;
-      }
-      .logout {
-        background: #cc0000;
-        margin-top: 25px;
-      }
+        body { font-family: sans-serif; text-align: center; padding: 50px; background-color: #f4f7f6; }
+        .container { background: white; padding: 40px; border-radius: 10px; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn-sistema { 
+            display: none; /* Escondido por padrão */
+            width: 200px; padding: 20px; margin: 10px; 
+            text-decoration: none; color: white; font-weight: bold; 
+            border-radius: 8px; font-size: 18px;
+        }
+        .acb { background-color: #28a745; }
+        .aei { background-color: #17a2b8; }
+        .logout { display: block; margin-top: 30px; color: #666; font-size: 14px; }
     </style>
-  </head>
+</head>
+<body>
 
-  <body>
-    <div class="container">
-      <h2>Bem-vindo</h2>
-      <p id="user"></p>
+<div class="container">
+    <h2 id="boasVindas">Bem-vindo!</h2>
+    <p>Escolha o sistema que deseja acessar:</p>
 
-      <h3>Sistemas disponíveis</h3>
-      <div id="apps"></div>
+    <a href="acbapp.html" id="btn-acb" class="btn-sistema acb">Sistema ACB</a>
+    <a href="aeiapp.html" id="btn-aei" class="btn-sistema aei">Sistema AEI</a>
 
-      <div class="app logout" onclick="sair()">Logout</div>
-    </div>
+    <a href="login.html" class="logout" onclick="localStorage.clear()">Sair / Trocar Usuário</a>
+</div>
 
 <script>
-const user = JSON.parse(localStorage.getItem("usuario"));
-if (!user) location.href = "login.html";
+    // 1. Recupera os dados do usuário salvos no login
+    const userStr = localStorage.getItem("usuario");
+    
+    if (!userStr) {
+        // Se não houver dados, volta para o login (segurança básica)
+        location.href = "login.html";
+    } else {
+        const user = JSON.parse(userStr);
+        document.getElementById("boasVindas").innerText = "Olá, " + user.nome;
 
-document.write("<h2>Sistemas disponíveis</h2>");
-user.sistemas.forEach(s => {
-  document.write(`<p><a href="${s}app.html">${s.toUpperCase()}</a></p>`);
-});
+        // 2. Lógica de permissão por sistema
+        // A variável user.sistema contém algo como "acb,aei" ou apenas "acb"
+        const permissoes = user.sistema.toLowerCase();
+
+        if (permissoes.includes("acb")) {
+            document.getElementById("btn-acb").style.display = "inline-block";
+        }
+        
+        if (permissoes.includes("aei")) {
+            document.getElementById("btn-aei").style.display = "inline-block";
+        }
+
+        // Se por algum erro ele não tiver nenhum dos dois
+        if (!permissoes.includes("acb") && !permissoes.includes("aei")) {
+            alert("Você não possui permissão para nenhum sistema. Contate o admin.");
+        }
+    }
 </script>
-
-nome.innerText = user.nome;
-</script>
-
-   
-  </body>
+</body>
 </html>
-
-
