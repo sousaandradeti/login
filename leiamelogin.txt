@@ -1,0 +1,28 @@
+modelo script login
+
+<script>
+(function() {
+    // 1. Busca os dados salvos no momento do login
+    const dadosSessao = localStorage.getItem("usuario");
+
+    // 2. Se não houver dados, manda de volta para o login imediatamente
+    if (!dadosSessao) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    const usuario = JSON.parse(dadosSessao);
+    
+    // 3. Define qual é o "nome" desta página para conferir na permissão
+    // Exemplo: se a página é teste.html, o nome aqui deve ser "teste"
+    const nomeDestaPagina = "teste"; 
+
+    // 4. Verifica se o nome desta página está na lista de sistemas do usuário
+    const sistemasPermitidos = usuario.sistema.toLowerCase().split(',').map(s => s.trim());
+
+    if (!sistemasPermitidos.includes(nomeDestaPagina)) {
+        alert("Você não tem permissão para acessar esta página!");
+        window.location.href = "home.html"; // Manda de volta para a home segura
+    }
+})();
+</script>
