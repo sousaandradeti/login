@@ -1,23 +1,54 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <base target="_top">
-  </head>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema ACB - Interno</title>
+    <style>
+        body { font-family: sans-serif; background-color: #e8f5e9; margin: 0; padding: 20px; }
+        .header { background: #2e7d32; color: white; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .content { background: white; padding: 20px; margin-top: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button { cursor: pointer; padding: 8px 15px; border: none; border-radius: 4px; background: #c62828; color: white; font-weight: bold; }
+    </style>
+</head>
+<body>
 
-  <body>
-    <h2>Sistema ACB</h2>
-    <p id="info"></p>
+<div class="header">
+    <h2 id="titulo">Sistema ACB</h2>
+    <div>
+        <span id="userInfo"></span>
+        <button onclick="sair()">Sair</button>
+    </div>
+</div>
 
-    <button onclick="voltar()">Voltar</button>
+<div class="content">
+    <h3>Bem-vindo à área do Sistema ACB</h3>
+    <p>Este conteúdo é restrito para usuários com permissão "acb".</p>
+    <hr>
+    <a href="home.html">← Voltar para seleção de sistemas</a>
+</div>
 
 <script>
-const user = JSON.parse(localStorage.getItem("usuario"));
-if (!user || user.sistema !== "acb") location.href = "login.html";
+    // VERIFICAÇÃO DE SEGURANÇA
+    const dados = localStorage.getItem("usuario");
+    if (!dados) {
+        window.location.href = "login.html";
+    } else {
+        const user = JSON.parse(dados);
+        
+        // Verifica se o sistema do usuário permite acessar ACB
+        if (!user.sistema.toLowerCase().includes("acb")) {
+            alert("Acesso negado! Você não tem permissão para o sistema ACB.");
+            window.location.href = "home.html";
+        } else {
+            document.getElementById("userInfo").innerText = user.nome + " (" + user.perfil + ") | ";
+        }
+    }
+
+    function sair() {
+        localStorage.clear();
+        window.location.href = "login.html";
+    }
 </script>
 
-<h1>Sistema ACB</h1>
-<p>Acesso autorizado</p>
-
-  </body>
+</body>
 </html>
-
