@@ -2,60 +2,74 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Home - Seleção de Sistema</title>
+    <title>Painel de Sistemas</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 50px; background-color: #f4f7f6; }
-        .container { background: white; padding: 40px; border-radius: 10px; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .btn-sistema { 
-            display: none; /* Escondido por padrão */
-            width: 200px; padding: 20px; margin: 10px; 
-            text-decoration: none; color: white; font-weight: bold; 
-            border-radius: 8px; font-size: 18px;
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; justify-content: center; padding: 40px; }
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
+        .grid-sistemas { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        
+        .btn-app { 
+            padding: 20px; border-radius: 8px; text-decoration: none; color: white; 
+            font-weight: bold; background: #007bff; transition: 0.2s; text-transform: uppercase;
+            display: flex; align-items: center; justify-content: center; font-size: 14px;
         }
-        .acb { background-color: #28a745; }
-        .aei { background-color: #17a2b8; }
-        .logout { display: block; margin-top: 30px; color: #666; font-size: 14px; }
+        .btn-app:hover { transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); background: #0056b3; }
+        
+        .logout { margin-top: 30px; display: inline-block; color: #dc3545; cursor: pointer; text-decoration: none; font-size: 14px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2 id="boasVindas">Bem-vindo!</h2>
-    <p>Escolha o sistema que deseja acessar:</p>
+    <h2 id="saudacao">Bem-vindo</h2>
+    <p>Selecione o sistema que deseja acessar:</p>
 
-    <a href="acbapp.html" id="btn-acb" class="btn-sistema acb">Sistema ACB</a>
-    <a href="aeiapp.html" id="btn-aei" class="btn-sistema aei">Sistema AEI</a>
+    <div id="listaSistemas" class="grid-sistemas">
+        </div>
 
-    <a href="login.html" class="logout" onclick="localStorage.clear()">Sair / Trocar Usuário</a>
+    <a href="#" class="logout" onclick="sair()">Sair do Sistema</a>
 </div>
 
 <script>
-    // 1. Recupera os dados do usuário salvos no login
     const userStr = localStorage.getItem("usuario");
     
     if (!userStr) {
-        // Se não houver dados, volta para o login (segurança básica)
-        location.href = "login.html";
+        window.location.href = "login.html";
     } else {
         const user = JSON.parse(userStr);
-        document.getElementById("boasVindas").innerText = "Olá, " + user.nome;
+        document.getElementById("saudacao").innerText = `Olá, ${user.nome}!`;
 
-        // 2. Lógica de permissão por sistema
-        // A variável user.sistema contém algo como "acb,aei" ou apenas "acb"
-        const permissoes = user.sistema.toLowerCase();
-
-        if (permissoes.includes("acb")) {
-            document.getElementById("btn-acb").style.display = "inline-block";
-        }
+        const container = document.getElementById("listaSistemas");
         
-        if (permissoes.includes("aei")) {
-            document.getElementById("btn-aei").style.display = "inline-block";
-        }
+        // Pega a string da planilha (ex: "acb,aei,qweapp.html,https://site.com")
+        // E transforma em uma lista (Array)
+        const sistemasPermitidos = user.sistema.split(',').map(s => s.trim());
 
-        // Se por algum erro ele não tiver nenhum dos dois
-        if (!permissoes.includes("acb") && !permissoes.includes("aei")) {
-            alert("Você não possui permissão para nenhum sistema. Contate o admin.");
-        }
+        sistemasPermitidos.forEach(sistema => {
+            if (sistema === "") return; // Pula se estiver vazio
+
+            const btn = document.createElement("a");
+            btn.className = "btn-app";
+            
+            // Define o destino
+            // Se não começar com http, assume que é um arquivo local e adiciona .html se necessário
+            if (sistema.startsWith("http")) {
+                btn.href = sistema;
+                btn.target = "_blank"; // Abre sites externos em nova aba
+                btn.innerText = "Sitema Externo"; 
+            } else {
+                // Se você digitou apenas "qweapp" na planilha, ele completa para "qweapp.html"
+                btn.href = sistema.includes(".html") ? sistema : sistema + ".html";
+                btn.innerText = sistema.replace(".html", "").toUpperCase();
+            }
+
+            container.appendChild(btn);
+        });
+    }
+
+    function sair() {
+        localStorage.clear();
+        window.location.href = "login.html";
     }
 </script>
 </body>
