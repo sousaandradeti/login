@@ -1,55 +1,98 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login do Sistema</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #e9ecef; margin: 0; }
+        .login-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); width: 100%; max-width: 350px; text-align: center; }
+        h3 { margin-bottom: 20px; color: #333; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; margin-top: 10px; }
+        button:hover { background-color: #218838; }
+        button:disabled { background-color: #6c757d; cursor: not-allowed; }
+        #msg { margin-top: 15px; font-size: 14px; min-height: 20px; font-weight: 500; }
+    </style>
 </head>
 <body>
 
-<h3>Login</h3>
+<div class="login-card">
+    <h3>Acesso Restrito</h3>
+    
+    <input id="email" type="email" placeholder="Seu e-mail" required>
+    <input id="senha" type="password" placeholder="Sua senha" required>
+    
+    <button id="btnEntrar" onclick="login()">Entrar</button>
 
-<input id="email" placeholder="Email">
-<input id="senha" type="password" placeholder="Senha">
-<button onclick="login()">Entrar</button>
-
-<p id="msg" style="color:red"></p>
+    <p id="msg"></p>
+</div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbyE9qrkzJkXDEMpykNjJ1ZJ6PoEmcphARLl5M_2zSrkfvVKUSsFLFUSZ4pFEKlWjBB1xA/exec";
+// URL da sua nova API atualizada
+const API = "https://script.google.com/macros/s/AKfycbyFWzP5LLQHTyuJmgmmOphnMfr2vt0lWqqi6RCaxUYqdbh7-cBZVGDbs6BUuTC4967Q9g/exec";
 
 function login() {
-  msg.innerText = "Validando...";
+    const email = document.getElementById("email").value.trim();
+    const senha = document.getElementById("senha").value.trim();
+    const msg = document.getElementById("msg");
+    const btn = document.getElementById("btnEntrar");
 
-  const email = document.getElementById("email").value;
-  const senha = document.getElementById("senha").value;
-
-  fetch(`${API}?email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`)
-    .then(r => r.json())
-    .then(res => {
-      if (!res.success) {
-        msg.innerText = res.message;
+    if (!email || !senha) {
+        msg.style.color = "orange";
+        msg.innerText = "Informe email e senha.";
         return;
-      }
+    }
 
-      localStorage.setItem("usuario", JSON.stringify(res));
+    // Início do processo
+    msg.style.color = "#555";
+    msg.innerText = "Validando credenciais...";
+    btn.disabled = true;
 
-      if (res.sistema === "acb") {
-        location.href = "acbapp.html";
-      } else {
-        location.href = "aeiapp.html";
-      }
-    })
-    .catch(err => {
-      msg.innerText = "Erro de conexão";
-      console.error(err);
-    });
+    // Faz a chamada para o Google Apps Script
+    fetch(`${API}?email=${encodeURIComponent(email)}&senha=${encodeURIComponent(senha)}`)
+        .then(r => r.json())
+        .then(res => {
+            if (!res.success) {
+                msg.style.color = "red";
+                msg.innerText = res.message || "Usuário ou senha inválida!";
+                btn.disabled = false;
+                return;
+            }
+
+            // Armazena os dados do usuário no navegador
+            localStorage.setItem("usuario", JSON.stringify(res));
+
+            msg.style.color = "green";
+            msg.innerText = "Login autorizado! Entrando...";
+
+            // Lógica de redirecionamento para múltiplos sistemas (Coluna E)
+            // Prioriza o 'acb' se o usuário tiver ambos, ou redireciona conforme a string
+            const sistemasPermitidos = res.sistema.toLowerCase();
+
+            setTimeout(() => {
+                if (sistemasPermitidos.includes("acb")) {
+                    location.href = "acbapp.html";
+                } else if (sistemasPermitidos.includes("aei")) {
+                    location.href = "aeiapp.html";
+                } else {
+                    msg.style.color = "red";
+                    msg.innerText = "Sistema não vinculado a este perfil.";
+                    btn.disabled = false;
+                }
+            }, 800);
+        })
+        .catch(err => {
+            msg.style.color = "red";
+            msg.innerText = "Erro ao conectar com o servidor.";
+            btn.disabled = false;
+            console.error(err);
+        });
 }
+
+// Atalho: pressionar Enter para logar
+document.addEventListener('keypress', (e) => { if(e.key === 'Enter') login(); });
 </script>
 
 </body>
 </html>
-
-
-
-
-
